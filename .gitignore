@@ -6,4 +6,6 @@
 
 Debug/
 Release/
+uild/
 build/
+.vs
