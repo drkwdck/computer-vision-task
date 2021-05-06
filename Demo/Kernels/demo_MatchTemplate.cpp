@@ -39,8 +39,7 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-namespace
-{
+namespace {
    const std::string m_openVXWindow    = "openVX";
    const std::string m_openCVWindow    = "openCV";
    const std::string m_originalWindow  = "original";
@@ -48,26 +47,24 @@ namespace
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void demo_MatchTemplate::execute()
-{
+void demo_MatchTemplate::execute() {
    cv::namedWindow(m_originalWindow, CV_WINDOW_NORMAL);
    cv::namedWindow(m_openVXWindow, CV_WINDOW_NORMAL);
    cv::namedWindow(m_openCVWindow, CV_WINDOW_NORMAL);
    cv::namedWindow(m_diffWindow, CV_WINDOW_NORMAL);
 
-   const std::string scr_img_path = "../../Image/Solvay_conference_1927.png";
-   const std::string tmpl_img_path = "../../Image/apple_cutted.png";
-   m_src_image = cv::imread(scr_img_path, CV_LOAD_IMAGE_GRAYSCALE);
+   const std::string scr_img_path = "../../Image/1.jpg";
+   const std::string tmpl_img_path = "../../Image/2.png";
+   m_src_image = cv::imread(scr_img_path);
    cv::imshow(m_originalWindow, m_src_image);
-   m_tmpl_image = cv::imread(tmpl_img_path, CV_LOAD_IMAGE_GRAYSCALE);
+   m_tmpl_image = cv::imread(tmpl_img_path);
 
    applyParameters(m_method, this);
    cv::waitKey(0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void demo_MatchTemplate::applyParameters(int, void* data)
-{
+void demo_MatchTemplate::applyParameters(int, void* data) {
    auto demo = static_cast<demo_MatchTemplate*>(data);
 
    const cv::Size img_size(demo->m_src_image.cols, demo->m_src_image.rows);
@@ -77,6 +74,25 @@ void demo_MatchTemplate::applyParameters(int, void* data)
    cv::Mat cv_image;
    cv::matchTemplate(demo->m_src_image, demo->m_tmpl_image, cv_image, (int)(demo->m_method));
    cv::imshow(m_openCVWindow, cv_image);
+   cv::normalize(cv_image, cv_image, 0, 1, cv::NORM_MINMAX, -1, cv::Mat());
+   double minVal; double maxVal; 
+   cv::Point min_loc, max_loc, mathc_loc;
+   cv::minMaxLoc(cv_image, &minVal, &maxVal, &min_loc, &max_loc, cv::Mat() );
+   
+   if( (int)(demo->m_method)  == (int)CV_TM_SQDIFF || (int)(demo->m_method) == (int)CV_TM_SQDIFF_NORMED ) {
+      mathc_loc = min_loc;
+   }
+   else {
+      mathc_loc = max_loc;
+   }
+
+   cv::rectangle(
+         demo->m_src_image,
+			mathc_loc,
+			cv::Point(mathc_loc.x + demo->m_tmpl_image.cols , mathc_loc.y + demo->m_tmpl_image.rows),
+			CV_RGB(255,0,0),
+			3);
+   cv::imshow(m_openCVWindow, demo->m_src_image);
    ///@}
 
    ///@{ OPENVX
@@ -105,20 +121,20 @@ void demo_MatchTemplate::applyParameters(int, void* data)
       VX_COLOR_SPACE_DEFAULT
    };
 
-   ref_MatchTemplate(&src_vx_image,  &tmpl_vx_image, &dstVXImage, demo->m_method);
+   // ref_MatchTemplate(&src_vx_image,  &tmpl_vx_image, &dstVXImage, demo->m_method);
 
-   const cv::Mat vxImage = cv::Mat(img_size, CV_8UC1, outVXImage);
-   cv::imshow(m_openVXWindow, vxImage);
+   // const cv::Mat vxImage = cv::Mat(img_size, CV_8UC1, outVXImage);
+   // cv::imshow(m_openVXWindow, vxImage);
    ///@}
 
    // Show difference of OpenVX and OpenCV
-   const cv::Mat diffImage(img_size, CV_8UC1);
-   cv::absdiff(vxImage, cv_image, diffImage);
-   cv::imshow(m_diffWindow, diffImage);
+   // const cv::Mat diffImage(img_size, CV_8UC1);
+   // cv::absdiff(vxImage, cv_image, diffImage);
+   // cv::imshow(m_diffWindow, diffImage);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-IDemoCasePtr CreateMatchTemplateDemo()
-{
+IDemoCasePtr CreateMatchTemplateDemo() {
    return std::make_unique<demo_MatchTemplate>();
 }
+
