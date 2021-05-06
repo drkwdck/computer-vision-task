@@ -13,7 +13,7 @@ void corr(const vx_image a, const vx_image b, vx_image result);
 void norm(const vx_image src_image, const vx_image tmpl_image, vx_image result);
 
 
-vx_status ref_MatchTemplate(const vx_image src_image, const vx_image tmpl_image, match_template_method_enum method, vx_image dst_image) {
+vx_status ref_MatchTemplate(const vx_image src_image, const vx_image tmpl_image, vx_image dst_image, match_template_method_enum method) {
     const uint32_t src_width = src_image->width;
     const uint32_t src_height = src_image->height;
     const uint32_t tmpl_width = tmpl_image->width;

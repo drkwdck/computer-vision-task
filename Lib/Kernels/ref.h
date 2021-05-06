@@ -136,7 +136,7 @@ typedef enum match_template_method_enum {
         VX_SUCCESS          - в случае успешного завершения;
         VX_ERROR_INVALID_PARAMETERS - в случае некорректных данных.       
 */
-vx_status ref_MatchTemplate(const vx_image src_image, const vx_image tmplt_image, match_template_method_enum method, vx_image dst_image);
+vx_status ref_MatchTemplate(const vx_image src_image, const vx_image tmpl_image, vx_image dst_image, match_template_method_enum method);
 
 
 /*
