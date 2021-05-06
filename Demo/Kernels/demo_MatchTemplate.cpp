@@ -63,7 +63,7 @@ void demo_MatchTemplate::execute() {
    cv::waitKey(0);
 }
 
-void drawWithRectangle(cv::Mat src_image, cv::Mat tmpl_image, cv::Mat mathc_result, int method) {
+void drawWithRectangle(cv::Mat src_image, cv::Mat tmpl_image, cv::Mat mathc_result, int method, std::string m_window_name) {
     cv::Mat original_image = src_image.clone();
     cv::normalize(mathc_result, mathc_result, 0, 1, cv::NORM_MINMAX, -1, cv::Mat());
     double minVal; double maxVal;
@@ -83,7 +83,7 @@ void drawWithRectangle(cv::Mat src_image, cv::Mat tmpl_image, cv::Mat mathc_resu
         cv::Point(mathc_loc.x + tmpl_image.cols, mathc_loc.y + tmpl_image.rows),
         CV_RGB(255, 0, 0),
         3);
-    cv::imshow(m_openCVWindow, original_image);
+    cv::imshow(m_window_name, original_image);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ void demo_MatchTemplate::applyParameters(int, void* data) {
    ///@{ OPENCV
    cv::Mat cv_image;
    cv::matchTemplate(demo->m_src_image, demo->m_tmpl_image, cv_image, (int)(demo->m_method));
-   drawWithRectangle(demo->m_src_image, demo->m_tmpl_image, cv_image, (int)(demo->m_method));
+   drawWithRectangle(demo->m_src_image, demo->m_tmpl_image, cv_image, (int)(demo->m_method), m_openCVWindow);
    ///@}
 
    ///@{ OPENVX
@@ -125,10 +125,10 @@ void demo_MatchTemplate::applyParameters(int, void* data) {
       VX_COLOR_SPACE_DEFAULT
    };
 
-   // ref_MatchTemplate(&src_vx_image,  &tmpl_vx_image, &dstVXImage, demo->m_method);
+    ref_MatchTemplate(&src_vx_image,  &tmpl_vx_image, &dstVXImage, demo->m_method);
 
-   // const cv::Mat vxImage = cv::Mat(img_size, CV_8UC1, outVXImage);
-   // cv::imshow(m_openVXWindow, vxImage);
+   const cv::Mat vxImage = cv::Mat(img_size, CV_8UC1, outVXImage);
+   drawWithRectangle(demo->m_src_image, demo->m_tmpl_image, vxImage, (int)(demo->m_method), m_openVXWindow);
    ///@}
 
    // Show difference of OpenVX and OpenCV
