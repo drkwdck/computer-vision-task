@@ -63,6 +63,29 @@ void demo_MatchTemplate::execute() {
    cv::waitKey(0);
 }
 
+void drawWithRectangle(cv::Mat src_image, cv::Mat tmpl_image, cv::Mat mathc_result, int method) {
+    cv::Mat original_image = src_image.clone();
+    cv::normalize(mathc_result, mathc_result, 0, 1, cv::NORM_MINMAX, -1, cv::Mat());
+    double minVal; double maxVal;
+    cv::Point min_loc, max_loc, mathc_loc;
+    cv::minMaxLoc(mathc_result, &minVal, &maxVal, &min_loc, &max_loc, cv::Mat());
+
+    if (method == (int)CV_TM_SQDIFF || method == (int)CV_TM_SQDIFF_NORMED) {
+        mathc_loc = min_loc;
+    }
+    else {
+        mathc_loc = max_loc;
+    }
+
+    cv::rectangle(
+        original_image,
+        mathc_loc,
+        cv::Point(mathc_loc.x + tmpl_image.cols, mathc_loc.y + tmpl_image.rows),
+        CV_RGB(255, 0, 0),
+        3);
+    cv::imshow(m_openCVWindow, original_image);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 void demo_MatchTemplate::applyParameters(int, void* data) {
    auto demo = static_cast<demo_MatchTemplate*>(data);
@@ -73,26 +96,7 @@ void demo_MatchTemplate::applyParameters(int, void* data) {
    ///@{ OPENCV
    cv::Mat cv_image;
    cv::matchTemplate(demo->m_src_image, demo->m_tmpl_image, cv_image, (int)(demo->m_method));
-   cv::imshow(m_openCVWindow, cv_image);
-   cv::normalize(cv_image, cv_image, 0, 1, cv::NORM_MINMAX, -1, cv::Mat());
-   double minVal; double maxVal; 
-   cv::Point min_loc, max_loc, mathc_loc;
-   cv::minMaxLoc(cv_image, &minVal, &maxVal, &min_loc, &max_loc, cv::Mat() );
-   
-   if( (int)(demo->m_method)  == (int)CV_TM_SQDIFF || (int)(demo->m_method) == (int)CV_TM_SQDIFF_NORMED ) {
-      mathc_loc = min_loc;
-   }
-   else {
-      mathc_loc = max_loc;
-   }
-
-   cv::rectangle(
-         demo->m_src_image,
-			mathc_loc,
-			cv::Point(mathc_loc.x + demo->m_tmpl_image.cols , mathc_loc.y + demo->m_tmpl_image.rows),
-			CV_RGB(255,0,0),
-			3);
-   cv::imshow(m_openCVWindow, demo->m_src_image);
+   drawWithRectangle(demo->m_src_image, demo->m_tmpl_image, cv_image, (int)(demo->m_method));
    ///@}
 
    ///@{ OPENVX
