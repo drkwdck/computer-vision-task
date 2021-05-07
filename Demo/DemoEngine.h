@@ -58,7 +58,7 @@ public:
     ///@brief ctor
     DemoEngine()
     {
-        m_demoRegistry.push_back(CreateThresholdingDemo());
+        // m_demoRegistry.push_back(CreateThresholdingDemo());
         m_demoRegistry.push_back(CreateMatchTemplateDemo());
     }
 

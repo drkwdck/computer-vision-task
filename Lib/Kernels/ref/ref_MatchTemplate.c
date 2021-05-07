@@ -38,15 +38,16 @@ vx_status ref_MatchTemplate(const vx_image src_image, const vx_image tmpl_image,
     }
 
     if (method == SQDIFF || method == SQDIFF_NORMED) {
-        for (uint32_t src_y = 0; src_y < src_height - tmpl_height; ++src_y) {
-            for (uint32_t src_x = 0; src_x < src_width - tmpl_width; ++src_x) {
-                dst_data[src_x * src_y] = 0;
-                
-                for (uint32_t tmpl_y = 0; tmpl_y < tmpl_height; ++tmpl_y) {
-                    for (uint32_t tmpl_x = 0; tmpl_x < tmpl_width; ++tmpl_x) {
-                        dst_data[src_x * src_y] += pow(tmpl_data[tmpl_x * tmpl_y] - src_data[(src_x + tmpl_x) * (src_y + tmpl_y)] , 2);                     
+
+        for (uint32_t start_y = 0; start_y < src_height - tmpl_height; ++start_y) {
+            for (uint32_t start_x = 0; start_x < src_width - tmpl_width; ++start_x) {
+                dst_data[start_y * src_width + start_x] = 0;
+
+                for (uint32_t y = 0; y < tmpl_height; ++y) {
+                    for (uint32_t x = 0; x < tmpl_width; ++x) {
+                        dst_data[start_y * src_width + start_x] += pow(tmpl_data[y * tmpl_width + x] - dst_data[start_y * src_width + start_x  + src_width * y + x], 2);
                     }
-                }     
+                }
             }
         }
 
@@ -95,4 +96,18 @@ void norm(const vx_image src_image, const vx_image tmpl_image, vx_image dst_imag
             dst_data[src_x * src_y] /= sqrt(src_sum * tmpl_sum);
         }
     }
+
+     for (uint32_t main_index = 0; main_index < (src_width - tmpl_width) * (src_height - tmpl_height); ++main_index) {
+            uint32_t src_sum = 0;
+            uint32_t tmpl_sum = 0;
+            
+            for (uint32_t y = 0; y < tmpl_height; ++y) {
+                for (uint32_t x = 0; x < tmpl_width; ++x) {
+                    src_sum += pow(src_data[main_index  + src_width * y + x], 2);
+                    tmpl_sum += pow(tmpl_data[tmpl_width * y + x], 2);
+                }
+            }
+
+            dst_data[main_index] /= sqrt(src_sum * tmpl_sum);
+        }
 }

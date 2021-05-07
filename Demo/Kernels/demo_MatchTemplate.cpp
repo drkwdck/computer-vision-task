@@ -53,8 +53,8 @@ void demo_MatchTemplate::execute() {
    cv::namedWindow(m_openCVWindow, CV_WINDOW_NORMAL);
    cv::namedWindow(m_diffWindow, CV_WINDOW_NORMAL);
 
-   const std::string scr_img_path = "../../Image/1.jpg";
-   const std::string tmpl_img_path = "../../Image/2.png";
+   const std::string scr_img_path = "../../Image/3.jpg";
+   const std::string tmpl_img_path = "../../Image/4.png";
    m_src_image = cv::imread(scr_img_path);
    cv::imshow(m_originalWindow, m_src_image);
    m_tmpl_image = cv::imread(tmpl_img_path);
@@ -125,10 +125,11 @@ void demo_MatchTemplate::applyParameters(int, void* data) {
       VX_COLOR_SPACE_DEFAULT
    };
 
-    ref_MatchTemplate(&src_vx_image,  &tmpl_vx_image, &dstVXImage, demo->m_method);
+   ref_MatchTemplate(&src_vx_image,  &tmpl_vx_image, &dstVXImage, demo->m_method);
 
-   const cv::Mat vxImage = cv::Mat(img_size, CV_8UC1, outVXImage);
-   drawWithRectangle(demo->m_src_image, demo->m_tmpl_image, vxImage, (int)(demo->m_method), m_openVXWindow);
+   const cv::Mat vxImage = cv::Mat(img_size, CV_8UC1, dstVXImage.data);
+   cv::imshow(m_openVXWindow, vxImage);
+   // drawWithRectangle(demo->m_src_image, demo->m_tmpl_image, vxImage, (int)(demo->m_method), m_openVXWindow);
    ///@}
 
    // Show difference of OpenVX and OpenCV
