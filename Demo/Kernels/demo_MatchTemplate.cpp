@@ -16,7 +16,7 @@ class demo_MatchTemplate : public IDemoCase {
 public:
    ///@brief default ctor
    demo_MatchTemplate()
-      : m_method(SQDIFF) {
+      : m_method(SQDIFF_NORMED) {
       // nothing to do
    }
 
