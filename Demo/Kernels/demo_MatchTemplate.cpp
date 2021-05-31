@@ -43,7 +43,6 @@ namespace {
    const std::string m_openVXWindow    = "openVX";
    const std::string m_openCVWindow    = "openCV";
    const std::string m_originalWindow  = "original";
-   const std::string m_diffWindow      = "Diff of " + m_openVXWindow + " and " + m_openCVWindow;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -51,7 +50,6 @@ void demo_MatchTemplate::execute() {
    cv::namedWindow(m_originalWindow, CV_WINDOW_NORMAL);
    cv::namedWindow(m_openVXWindow, CV_WINDOW_NORMAL);
    cv::namedWindow(m_openCVWindow, CV_WINDOW_NORMAL);
-   cv::namedWindow(m_diffWindow, CV_WINDOW_NORMAL);
 
    const std::string scr_img_path = "../../Image/3.jpg";
    const std::string tmpl_img_path = "../../Image/4.png";

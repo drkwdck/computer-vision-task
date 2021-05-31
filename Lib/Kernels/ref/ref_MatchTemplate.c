@@ -45,7 +45,7 @@ vx_status ref_MatchTemplate(const vx_image src_image, const vx_image tmpl_image,
 
                 for (uint32_t y = 0; y < tmpl_height; ++y) {
                     for (uint32_t x = 0; x < tmpl_width; ++x) {
-                        dst_data[start_y * src_width + start_x] += pow(tmpl_data[y * tmpl_width + x] - dst_data[start_y * src_width + start_x  + src_width * y + x], 2);
+                        dst_data[start_y * src_width + start_x] += pow(tmpl_data[y * tmpl_width + x] - src_data[start_y * src_width + start_x  + src_width * y + x], 2);
                     }
                 }
             }
@@ -93,7 +93,9 @@ void norm(const vx_image src_image, const vx_image tmpl_image, vx_image dst_imag
                 }
             }
 
-            dst_data[start_y * src_width + start_x] /= sqrt(src_sum * tmpl_sum);
+            double old_value = (double)dst_data[start_y * src_width + start_x];
+            double norm_coef = sqrt(src_sum * tmpl_sum);
+            dst_data[start_y * src_width + start_x] = (uint32_t)(old_value * pow(10, 6) / norm_coef);            
         }
     }
 }
