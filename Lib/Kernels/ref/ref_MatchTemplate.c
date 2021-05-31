@@ -45,7 +45,7 @@ vx_status ref_MatchTemplate(const vx_image src_image, const vx_image tmpl_image,
 
                 for (uint32_t y = 0; y < tmpl_height; ++y) {
                     for (uint32_t x = 0; x < tmpl_width; ++x) {
-                        dst_data[start_y * src_width + start_x] += pow(tmpl_data[y * tmpl_width + x] - src_data[start_y * src_width + start_x  + src_width * y + x], 2);
+                        dst_data[start_y * src_width + start_x] += log(pow(tmpl_data[y * tmpl_width + x] - src_data[start_y * src_width + start_x + src_width * y + x], 2));
                     }
                 }
             }
