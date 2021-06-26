@@ -39,20 +39,26 @@ vx_status ref_MatchTemplate(const vx_image src_image, const vx_image tmpl_image,
 
     if (method == SQDIFF || method == SQDIFF_NORMED) {
 
+        int i = 0;
         for (uint32_t start_y = 0; start_y < src_height - tmpl_height; ++start_y) {
             for (uint32_t start_x = 0; start_x < src_width - tmpl_width; ++start_x) {
                 dst_data[start_y * src_width + start_x] = 0;
 
+                int a = 0;
                 for (uint32_t y = 0; y < tmpl_height; ++y) {
                     for (uint32_t x = 0; x < tmpl_width; ++x) {
-                        dst_data[start_y * src_width + start_x] += log(pow(tmpl_data[y * tmpl_width + x] - src_data[start_y * src_width + start_x + src_width * y + x], 2));
+                        a += abs(tmpl_data[y * tmpl_width + x] - src_data[start_y * src_width + start_x + tmpl_width * y + x]);
                     }
                 }
+
+                
+                int b = a / tmpl_height / tmpl_width;
+                dst_data[start_y * src_width + start_x] = b;
             }
         }
 
         if (method == SQDIFF_NORMED) {
-            norm(src_image, tmpl_image, dst_image);
+            //norm(src_image, tmpl_image, dst_image);
         }
     }
 
