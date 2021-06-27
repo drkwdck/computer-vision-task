@@ -16,7 +16,7 @@ class demo_MatchTemplate : public IDemoCase {
 public:
    ///@brief default ctor
    demo_MatchTemplate()
-      : m_method(SQDIFF_NORMED) {
+      : m_method(SQDIFF) {
       // nothing to do
    }
 
@@ -51,11 +51,13 @@ void demo_MatchTemplate::execute() {
    cv::namedWindow(m_openVXWindow, CV_WINDOW_NORMAL);
    cv::namedWindow(m_openCVWindow, CV_WINDOW_NORMAL);
 
-   const std::string scr_img_path = "../../Image/3.jpg";
-   const std::string tmpl_img_path = "../../Image/4.png";
-   m_src_image = cv::imread(scr_img_path);
+   const std::string scr_img_path = "../../Image/apple.png";
+   m_src_image = cv::imread(scr_img_path, CV_LOAD_IMAGE_GRAYSCALE);
    cv::imshow(m_originalWindow, m_src_image);
-   m_tmpl_image = cv::imread(tmpl_img_path);
+
+   cv::Range rows (480 - 220, 480);
+   cv::Range cols (640 / 2 - 132 , 640 / 2 + 100);
+   m_tmpl_image = m_src_image(rows, cols);
 
    applyParameters(m_method, this);
    cv::waitKey(0);
@@ -63,12 +65,12 @@ void demo_MatchTemplate::execute() {
 
 void drawWithRectangle(cv::Mat src_image, cv::Mat tmpl_image, cv::Mat mathc_result, int method, std::string m_window_name) {
     cv::Mat original_image = src_image.clone();
-    cv::normalize(mathc_result, mathc_result, 0, 1, cv::NORM_MINMAX, -1, cv::Mat());
+    //cv::normalize(mathc_result, mathc_result, 0, 1, cv::NORM_MINMAX, -1, cv::Mat());
     double minVal; double maxVal;
     cv::Point min_loc, max_loc, mathc_loc;
     cv::minMaxLoc(mathc_result, &minVal, &maxVal, &min_loc, &max_loc, cv::Mat());
 
-    if (method == (int)CV_TM_SQDIFF || method == (int)CV_TM_SQDIFF_NORMED) {
+    if (method == (int)CV_TM_SQDIFF || method == (int)CV_TM_SQDIFF_NORMED || method == -2) {
         mathc_loc = min_loc;
     }
     else {
@@ -79,7 +81,7 @@ void drawWithRectangle(cv::Mat src_image, cv::Mat tmpl_image, cv::Mat mathc_resu
         original_image,
         mathc_loc,
         cv::Point(mathc_loc.x + tmpl_image.cols, mathc_loc.y + tmpl_image.rows),
-        CV_RGB(255, 0, 0),
+        CV_RGB(255, 255, 255),
         3);
     cv::imshow(m_window_name, original_image);
 }
@@ -90,12 +92,6 @@ void demo_MatchTemplate::applyParameters(int, void* data) {
 
    const cv::Size img_size(demo->m_src_image.cols, demo->m_src_image.rows);
    const cv::Size tmpl_size(demo->m_tmpl_image.cols, demo->m_tmpl_image.rows);
-
-   ///@{ OPENCV
-   cv::Mat cv_image;
-   cv::matchTemplate(demo->m_src_image, demo->m_tmpl_image, cv_image, (int)(demo->m_method));
-   drawWithRectangle(demo->m_src_image, demo->m_tmpl_image, cv_image, (int)(demo->m_method), m_openCVWindow);
-   ///@}
 
    ///@{ OPENVX
    _vx_image src_vx_image = {
@@ -126,8 +122,13 @@ void demo_MatchTemplate::applyParameters(int, void* data) {
    ref_MatchTemplate(&src_vx_image,  &tmpl_vx_image, &dstVXImage, demo->m_method);
 
    const cv::Mat vxImage = cv::Mat(img_size, CV_8UC1, dstVXImage.data);
-   cv::imshow(m_openVXWindow, vxImage);
-   // drawWithRectangle(demo->m_src_image, demo->m_tmpl_image, vxImage, (int)(demo->m_method), m_openVXWindow);
+   //cv::imshow(m_openVXWindow, vxImage);
+    drawWithRectangle(demo->m_src_image, demo->m_tmpl_image, vxImage, (int)(demo->m_method), m_openVXWindow);
+
+   ///@{ OPENCV
+   cv::Mat cv_image;
+   cv::matchTemplate(demo->m_src_image, demo->m_tmpl_image, cv_image, (int)(demo->m_method));
+   drawWithRectangle(demo->m_src_image, demo->m_tmpl_image, cv_image, (int)(demo->m_method), m_openCVWindow);
    ///@}
 
    // Show difference of OpenVX and OpenCV
