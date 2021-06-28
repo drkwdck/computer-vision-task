@@ -64,7 +64,7 @@ vx_status ref_MatchTemplate(const vx_image src_image, const vx_image tmpl_image,
         }
 
         if (method == SQDIFF_NORMED) {
-            //norm(src_image, tmpl_image, dst_image);
+            norm(src_image, tmpl_image, dst_image);
         }
     }
 
@@ -95,8 +95,8 @@ void norm(const vx_image src_image, const vx_image tmpl_image, vx_image dst_imag
     
     for (uint32_t start_y = 0; start_y < src_height - tmpl_height; ++start_y) {
         for (uint32_t start_x = 0; start_x < src_width - tmpl_width; ++start_x) {
-            uint64_t src_sum = 0;
-            uint64_t tmpl_sum = 0;
+            double src_sum = 0;
+            double tmpl_sum = 0;
         
             for (uint32_t y = 0; y < tmpl_height; ++y) {
                 for (uint32_t x = 0; x < tmpl_width; ++x) {
@@ -106,8 +106,8 @@ void norm(const vx_image src_image, const vx_image tmpl_image, vx_image dst_imag
             }
 
             double old_value = (double)dst_data[start_y * src_width + start_x];
-            double norm_coef = sqrt(src_sum * tmpl_sum);
-            dst_data[start_y * src_width + start_x] = (uint32_t)(old_value * pow(10, 6) / norm_coef);            
+            double norm_coef = log(sqrt(src_sum * tmpl_sum));
+            dst_data[start_y * src_width + start_x] = old_value / norm_coef * 255 / 5;
         }
     }
 }

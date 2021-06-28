@@ -16,7 +16,7 @@ class demo_MatchTemplate : public IDemoCase {
 public:
    ///@brief default ctor
    demo_MatchTemplate()
-      : m_method(SQDIFF) {
+      : m_method(SQDIFF_NORMED) {
       // nothing to do
    }
 
@@ -70,7 +70,7 @@ void drawWithRectangle(cv::Mat src_image, cv::Mat tmpl_image, cv::Mat mathc_resu
     cv::Point min_loc, max_loc, mathc_loc;
     cv::minMaxLoc(mathc_result, &minVal, &maxVal, &min_loc, &max_loc, cv::Mat());
 
-    if (method == (int)CV_TM_SQDIFF || method == (int)CV_TM_SQDIFF_NORMED || method == -2) {
+    if (method == (int)CV_TM_SQDIFF || method == (int)CV_TM_SQDIFF_NORMED) {
         mathc_loc = min_loc;
     }
     else {
