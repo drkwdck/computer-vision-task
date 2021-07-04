@@ -16,7 +16,7 @@ class demo_MatchTemplate : public IDemoCase {
 public:
    ///@brief default ctor
    demo_MatchTemplate()
-      : m_method(SQDIFF_NORMED) {
+      : m_method(CCOEFF) {
       // nothing to do
    }
 
@@ -122,19 +122,13 @@ void demo_MatchTemplate::applyParameters(int, void* data) {
    ref_MatchTemplate(&src_vx_image,  &tmpl_vx_image, &dstVXImage, demo->m_method);
 
    const cv::Mat vxImage = cv::Mat(img_size, CV_8UC1, dstVXImage.data);
-   //cv::imshow(m_openVXWindow, vxImage);
-    drawWithRectangle(demo->m_src_image, demo->m_tmpl_image, vxImage, (int)(demo->m_method), m_openVXWindow);
+   drawWithRectangle(demo->m_src_image, demo->m_tmpl_image, vxImage, (int)(demo->m_method), m_openVXWindow);
 
    ///@{ OPENCV
    cv::Mat cv_image;
    cv::matchTemplate(demo->m_src_image, demo->m_tmpl_image, cv_image, (int)(demo->m_method));
    drawWithRectangle(demo->m_src_image, demo->m_tmpl_image, cv_image, (int)(demo->m_method), m_openCVWindow);
    ///@}
-
-   // Show difference of OpenVX and OpenCV
-   // const cv::Mat diffImage(img_size, CV_8UC1);
-   // cv::absdiff(vxImage, cv_image, diffImage);
-   // cv::imshow(m_diffWindow, diffImage);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
