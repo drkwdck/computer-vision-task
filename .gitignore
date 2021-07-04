@@ -8,4 +8,5 @@ Debug/
 Release/
 uild/
 build/
-.vs
+.vs/
+.vscode/

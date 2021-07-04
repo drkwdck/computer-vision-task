@@ -110,19 +110,34 @@ vx_status ref_Threshold(const vx_image src_image, vx_image dst_image, const vx_t
 // ref_HuMoments
 
 /*
+    Метод, с помощью которого шаблон сравнивается с областью изображения в ref_MatchTemplate
+*/
+typedef enum match_template_method_enum {
+    SQDIFF = 0,
+    SQDIFF_NORMED = 1,
+    CCORR = 2,
+    CCORR_NORMED = 3,
+    CCOEFF = 4,
+    CCOEFF_NORMED = 5
+}match_template_method_enum;
+
+/*
     Function: ref_MatchTemplate
 
     Описание фукнции
 
     Parameters (пример):
         src_image           - входное изображение;
-        dst_image           - выходное изображение;
+        tmplt_image         - шаблон (эталон);
+        method              - способ сравнения;
+        dst_image           - карта результатов сравнения;
 
     Return:
         VX_SUCCESS          - в случае успешного завершения;
         VX_ERROR_INVALID_PARAMETERS - в случае некорректных данных.       
 */
-// ref_MatchTemplate
+vx_status ref_MatchTemplate(const vx_image src_image, const vx_image tmpl_image, vx_image dst_image, match_template_method_enum method);
+
 
 /*
     Function: ref_WatershedSegmentation
